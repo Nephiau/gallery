@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+:root {
+  --background: transparent;
+  --foreground: #1E1A2E;
+  --sage: #5BA89A;
+  --sage-deep: #6B2D6E;
+  --sage-soft: #B8DDD8;
+  --cream: #F1F9F1;
+  --ink: #120A1E;
+  --border: #D5DDD8;
+  --muted-foreground: #6A5A78;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(200, 180, 230, 0.6) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 70%, rgba(180, 230, 200, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 55% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 15%, rgba(144, 200, 160, 0.5) 0%, transparent 45%),
+    radial-gradient(ellipse at 15% 75%, rgba(160, 230, 240, 0.5) 0%, transparent 45%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+#root { width: 100%; background: transparent; }
+
+img { display: block; max-width: 100%; }
+
+.font-display { font-family: var(--font-display); }
+.font-mono-label { font-family: var(--font-mono); }
+.italic-serif { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+
+::selection { background: rgba(91, 168, 154, 0.3); color: var(--ink); }
+
+.card-wrap { position: relative; }
+.card-wrap:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.12); z-index: 10; }
+
+.card-wrap .corner {
+  position: absolute;
+  width: 28px; height: 28px;
+  pointer-events: none;
+  z-index: 3;
+  transition: transform 400ms cubic-bezier(0.34,1.2,0.64,1), opacity 300ms ease;
+  opacity: 0;
+}
+.card-wrap:hover .corner { opacity: 1; }
+.card-wrap .delete-btn { opacity: 0; transition: opacity 200ms ease; }
+.card-wrap:hover .delete-btn { opacity: 1; }
+
+/* top-left */
+.card-wrap .corner.tl {
+  top: 0; left: 0;
+  border-top: 2px solid var(--sage);
+  border-left: 2px solid var(--sage);
+  transform: translate(-6px, -6px);
+}
+.card-wrap:hover .corner.tl { transform: translate(0, 0); }
+
+/* top-right */
+.card-wrap .corner.tr {
+  top: 0; right: 0;
+  border-top: 2px solid var(--sage);
+  border-right: 2px solid var(--sage);
+  transform: translate(6px, -6px);
+}
+.card-wrap:hover .corner.tr { transform: translate(0, 0); }
+
+/* bottom-left */
+.card-wrap .corner.bl {
+  bottom: 0; left: 0;
+  border-bottom: 2px solid var(--sage);
+  border-left: 2px solid var(--sage);
+  transform: translate(-6px, 6px);
+}
+.card-wrap:hover .corner.bl { transform: translate(0, 0); }
+
+/* bottom-right */
+.card-wrap .corner.br {
+  bottom: 0; right: 0;
+  border-bottom: 2px solid var(--sage);
+  border-right: 2px solid var(--sage);
+  transform: translate(6px, 6px);
+}
+.card-wrap:hover .corner.br { transform: translate(0, 0); }
+
+/* ====== RESPONSIVE MEDIA QUERIES ====== */
+
+/* Desktop nav visible by default, mobile nav hidden */
+.nav-desktop { display: flex; }
+.nav-mobile { display: none; }
+
+/* Show mobile nav on tablets and below (covers overlap at ~1063px) */
+@media (max-width: 1400px) {
+  .nav-desktop { display: none !important; }
+  .nav-mobile { display: flex !important; }
+
+  .card-wrap .corner { display: none; }
+  .card-wrap .delete-btn { opacity: 1 !important; }
+}
+
+/* Extra small */
+@media (max-width: 480px) {
+  .card-wrap .corner { display: none; }
+  .card-wrap .delete-btn { opacity: 1 !important; }
+}
