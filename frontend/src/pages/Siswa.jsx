@@ -13,6 +13,7 @@ export default function Siswa() {
   const [allData, setAllData] = useState([]) // all together/album photos (fetched once)
   const [query, setQuery] = useState('')
   const [activeClass, setActiveClass] = useState('Semua')
+  const [modalOpen, setModalOpen] = useState(false)
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   // Fetch students when the active class changes.
@@ -112,8 +113,8 @@ export default function Siswa() {
 
       {/* Card grid — passes isAlbum so together photos render at natural aspect ratio */}
       <CardGrid data={filtered} collection="Siswa" onDelete={handleDelete} onBulkDelete={handleBulkDelete}
-        onUpdate={handleUpdate} isAlbum={activeClass === ALBUM} />
-      <ScrollUpButton />
+        onUpdate={handleUpdate} isAlbum={activeClass === ALBUM} onModalChange={setModalOpen} />
+      <ScrollUpButton hidden={modalOpen} />
     </div>
   )
 }

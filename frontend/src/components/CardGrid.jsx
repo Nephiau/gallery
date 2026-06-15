@@ -8,9 +8,14 @@ import useMediaQuery from '../useMediaQuery'
 // Renders a masonry grid of student/teacher/moment cards.
 // Splits data into 'together' (group photos) and 'single' (individual) sections.
 // Admins can select multiple cards for bulk deletion.
-export default function CardGrid({ data, onDelete, collection, onBulkDelete, onUpdate, isAlbum }) {
+export default function CardGrid({ data, onDelete, collection, onBulkDelete, onUpdate, isAlbum, onModalChange }) {
   const [selected, setSelected] = useState(null)
   const [selectedIds, setSelectedIds] = useState([])
+
+  const setSelectedWithCallback = (val) => {
+    setSelected(val)
+    if (onModalChange) onModalChange(!!val)
+  }
   const token = localStorage.getItem('token')
   const role = localStorage.getItem('role')
   const isAdmin = token && role === 'admin'
@@ -71,7 +76,7 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
           {together.map(d => (
             <div key={d._id || d.name} style={{ breakInside: 'avoid', marginBottom: '1rem' }}>
               <TogetherCard {...d}
-                onClick={() => setSelected(d)}
+                onClick={() => setSelectedWithCallback(d)}
                 onDelete={isAdmin && onDelete ? (id) => onDelete(id) : undefined}
                 selected={selectedIds.includes(d._id)}
                 onToggleSelect={isAdmin ? toggleSelect : undefined}
@@ -88,7 +93,7 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
           {singles.map(d => (
             <div key={d._id || d.name} style={{ breakInside: 'avoid', marginBottom: '1rem' }}>
               <Card {...d}
-                onClick={() => setSelected(d)}
+                onClick={() => setSelectedWithCallback(d)}
                 onDelete={isAdmin && onDelete ? (id) => onDelete(id) : undefined}
                 selected={selectedIds.includes(d._id)}
                 onToggleSelect={isAdmin ? toggleSelect : undefined}
@@ -101,11 +106,11 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
       )}
 
       {/* Detail/edit modal — suppressed in album mode or for together cards (lightbox is used instead) */}
-      <Modal card={(isAlbum || selected?.type === 'together') ? null : selected} onClose={() => setSelected(null)} collection={collection} onUpdate={onUpdate} />
+      <Modal card={(isAlbum || selected?.type === 'together') ? null : selected} onClose={() => setSelectedWithCallback(null)} collection={collection} onUpdate={onUpdate} />
 
       {/* Lightbox — photo-only overlay for album mode or together cards */}
       {(isAlbum || selected?.type === 'together') && (
-        <Lightbox photo={selected} onClose={() => setSelected(null)} />
+        <Lightbox photo={selected} onClose={() => setSelectedWithCallback(null)} />
       )}
     </>
   )

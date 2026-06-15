@@ -4,7 +4,7 @@ import useMediaQuery from '../useMediaQuery'
 // Floating "↑ TOP" button that appears after the user has scrolled down.
 // Optionally accepts a triggerRef — if provided, shows only when that element
 // has scrolled above the viewport top; otherwise shows after 300px of scroll.
-export default function ScrollUpButton({ triggerRef }) {
+export default function ScrollUpButton({ triggerRef, hidden }) {
   const [visible, setVisible] = useState(false)
   const isWide = useMediaQuery('(min-width: 1024px)')
 
@@ -23,7 +23,7 @@ export default function ScrollUpButton({ triggerRef }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [triggerRef])
 
-  if (!visible) return null
+  if (!visible || hidden) return null
 
   return (
     <button
