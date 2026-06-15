@@ -91,9 +91,9 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
         }}>✕</button>
 
         {/* Left side: photo */}
-        <div style={{ flex: isMobile ? '0 0 auto' : '0 0 420px', maxHeight: isMobile ? '35vh' : 'none' }}>
+        <div style={{ flex: isMobile ? '0 0 auto' : '0 0 420px' }}>
           <img src={card.image} alt={card.name}
-            style={{ width: '100%', height: '100%', maxHeight: isMobile ? '35vh' : 'none', objectFit: 'cover', display: 'block' }} />
+            style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', display: 'block' }} />
         </div>
 
         {/* Right side: info or edit form */}
@@ -158,8 +158,8 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
           ) : (
             /* Read-only view */
             <>
-              <p style={{ fontWeight: 600, fontSize: isMobile ? '1.25rem' : '2rem', color: 'var(--ink)' }}>{card.name}</p>
-              {card.instagram && <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>@{card.instagram}</p>}
+              <p style={{ fontWeight: 600, fontSize: isMobile ? '1.25rem' : '2rem', color: 'var(--ink)', marginBottom: '0.1rem' }}>{card.name}</p>
+              {card.instagram && <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', marginTop: 0 }}>📷 @{card.instagram}</p>}
               <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>
                 {card.nomorAbsen && <>#{card.nomorAbsen} · </>}{card.className}
               </p>
