@@ -70,37 +70,37 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
       {/* Modal panel — stop click propagation so backdrop click doesn't bubble */}
       <div onClick={e => e.stopPropagation()} style={{
         background: 'rgba(255,255,255,0.95)', borderRadius: '16px',
-        overflow: 'hidden', display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+        overflow: 'hidden', display: 'flex', flexDirection: 'row',
         border: '1px solid var(--border)', fontFamily: 'var(--font-body)',
         maxWidth: isMobile ? '92%' : '1100px',
         width: isMobile ? '92%' : '92%',
-        maxHeight: isMobile ? '85vh' : '90vh',
-        overflowY: isMobile ? 'auto' : 'visible',
+        maxHeight: '90vh',
         transform: visible ? 'scale(1) translateY(0)' : 'scale(0.92) translateY(24px)',
         opacity: visible ? 1 : 0,
         transition: 'transform 450ms cubic-bezier(0.34,1.56,0.64,1), opacity 350ms ease',
         position: 'relative',
       }}>
-        {/* Close button — always visible on mobile */}
+        {/* Close button — always visible */}
         <button onClick={onClose} style={{
-          position: 'absolute', top: '0.75rem', right: '0.75rem', zIndex: 10,
+          position: 'absolute', top: '0.6rem', right: '0.6rem', zIndex: 10,
           background: 'rgba(0,0,0,0.45)', color: '#fff', border: 'none',
-          borderRadius: '50%', width: '32px', height: '32px',
-          fontSize: '1rem', cursor: 'pointer',
+          borderRadius: '50%', width: '28px', height: '28px',
+          fontSize: '0.85rem', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>✕</button>
 
         {/* Left side: photo */}
-        <div style={{ flex: isMobile ? '0 0 auto' : '0 0 420px' }}>
+        <div style={{ flex: isMobile ? '0 0 40%' : '0 0 420px' }}>
           <img src={card.image} alt={card.name}
-            style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block' }} />
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
 
         {/* Right side: info or edit form */}
         <div style={{
-          flex: 1, padding: isMobile ? '1rem' : '3.5rem',
+          flex: 1, padding: isMobile ? '0.85rem 0.85rem 0.85rem 1rem' : '3.5rem',
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          gap: '0.5rem', position: 'relative',
+          gap: isMobile ? '0.25rem' : '0.75rem', position: 'relative',
+          overflowY: 'auto',
         }}>
           {/* Edit toggle button — admin only */}
           {isAdmin && !editing && (
@@ -158,19 +158,18 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
           ) : (
             /* Read-only view */
             <>
-              <p style={{ fontWeight: 600, fontSize: isMobile ? '1.25rem' : '2rem', color: 'var(--ink)', marginBottom: '0.1rem' }}>{card.name}</p>
-              {card.instagram && <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', marginTop: 0 }}>📷 @{card.instagram}</p>}
-              <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>
+              <p style={{ fontWeight: 600, fontSize: isMobile ? '0.95rem' : '2rem', color: 'var(--ink)', marginBottom: '0.1rem' }}>{card.name}</p>
+              {card.instagram && <p style={{ fontSize: isMobile ? '0.7rem' : '0.8rem', color: 'var(--muted-foreground)', marginTop: 0 }}>📷 @{card.instagram}</p>}
+              <p style={{ fontSize: isMobile ? '0.65rem' : '0.75rem', letterSpacing: '0.1em', color: 'var(--muted-foreground)', marginBottom: '0.1rem' }}>
                 {card.nomorAbsen && <>#{card.nomorAbsen} · </>}{card.className}
               </p>
               {card.quote && (
-                <p style={{ fontSize: '1rem', fontStyle: 'italic', color: 'var(--muted-foreground)', borderTop: '1px solid var(--border)', paddingTop: '1.25rem', lineHeight: 1.8, marginBottom: '0.5rem' }}>
+                <p style={{ fontSize: isMobile ? '0.75rem' : '1rem', fontStyle: 'italic', color: 'var(--muted-foreground)', borderTop: '1px solid var(--border)', paddingTop: isMobile ? '0.5rem' : '1.25rem', lineHeight: 1.6, marginBottom: '0.25rem' }}>
                   "{card.quote}"
                 </p>
               )}
-              
               {card.birthPlace && card.birthDate && (
-                <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>
+                <p style={{ fontSize: isMobile ? '0.65rem' : '0.8rem', color: 'var(--muted-foreground)' }}>
                   📍 {card.birthPlace}, {new Date(card.birthDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               )}
