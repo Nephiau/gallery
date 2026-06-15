@@ -1,8 +1,8 @@
-// Group/together photo card — used for class album shots.
-// In album mode (isAlbum=true), the image renders at its natural aspect ratio
-// to create a masonry effect. Otherwise forces 1:1 square crop.
+import { useState } from 'react'
+
 export default function TogetherCard({ image, name, className, _id, onClick, onDelete, selected, onToggleSelect, isAlbum }) {
   const isSelectable = !!onToggleSelect
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   return (
     <div style={{ width: '100%' }}>
@@ -42,8 +42,19 @@ export default function TogetherCard({ image, name, className, _id, onClick, onD
         )}
 
         {/* Photo — natural ratio in album mode, 1:1 square otherwise */}
-        <img src={image} alt={name} loading="lazy"
-          style={{ width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1', objectFit: 'cover', display: 'block', transition: 'transform 400ms ease' }} />
+        <div style={{ position: 'relative', width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1', minHeight: imgLoaded ? 'unset' : '120px' }}>
+          {!imgLoaded && (
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(90deg, rgba(200,200,200,0.15) 25%, rgba(200,200,200,0.3) 50%, rgba(200,200,200,0.15) 75%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 1.4s infinite',
+            }} />
+          )}
+          <img src={image} alt={name} loading="lazy"
+            onLoad={() => setImgLoaded(true)}
+            style={{ width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1', objectFit: 'cover', display: 'block', transition: 'transform 400ms ease, opacity 300ms ease', opacity: imgLoaded ? 1 : 0 }} />
+        </div>
 
         {/* Delete button — admin only, appears on hover */}
         {onDelete && (

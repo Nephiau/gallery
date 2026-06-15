@@ -1,9 +1,9 @@
-// Individual student/teacher portrait card.
-// Shows photo, name, class, nickname, quote, and Instagram.
-// Admins see a delete button and a checkbox for bulk selection.
+import { useState } from 'react'
+
 export default function Card({ image, name, nickname, className, quote, instagram, _id, onClick, onDelete, selected, onToggleSelect, isAlbum, collection }) {
   const isSelectable = !!onToggleSelect
   const isGuru = collection === 'Guru'
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   return (
     <div style={{ width: '100%' }}>
@@ -55,8 +55,19 @@ export default function Card({ image, name, nickname, className, quote, instagra
 
         {/* Photo — falls back to placeholder if no image */}
         {image ? (
-          <img src={image} alt={name} loading="lazy"
-            style={{ width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1', objectFit: 'cover', display: 'block' }} />
+          <div style={{ position: 'relative', width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1' }}>
+            {!imgLoaded && (
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(90deg, rgba(200,200,200,0.15) 25%, rgba(200,200,200,0.3) 50%, rgba(200,200,200,0.15) 75%)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer 1.4s infinite',
+              }} />
+            )}
+            <img src={image} alt={name} loading="lazy"
+              onLoad={() => setImgLoaded(true)}
+              style={{ width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1', objectFit: 'cover', display: 'block', opacity: imgLoaded ? 1 : 0, transition: 'opacity 300ms ease' }} />
+          </div>
         ) : (
           <div style={{
             width: '100%', aspectRatio: '1/1',
