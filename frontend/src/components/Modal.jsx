@@ -112,10 +112,6 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
             }}>Edit</button>
           )}
 
-          <p style={{ fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--muted-foreground)', textTransform: 'uppercase' }}>
-            #{card.indexNumber || '-'}
-          </p>
-
           {editing ? (
             /* Edit form — fields vary by collection type */
             <>
@@ -163,7 +159,7 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
             /* Read-only view */
             <>
               <p style={{ fontWeight: 600, fontSize: isMobile ? '1.25rem' : '2rem', color: 'var(--ink)' }}>{card.name}</p>
-              {card.nickname && <p style={{ fontSize: '1rem', color: 'var(--sage-deep)', marginTop: '-0.25rem' }}>@{card.nickname}</p>}
+              {card.instagram && <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>📷 @{card.instagram}</p>}
               <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>
                 {card.nomorAbsen && <>#{card.nomorAbsen} · </>}{card.className}
               </p>
@@ -172,7 +168,7 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
                   "{card.quote}"
                 </p>
               )}
-              {card.instagram && <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>📷 @{card.instagram}</p>}
+              
               {card.birthPlace && card.birthDate && (
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)' }}>
                   📍 {card.birthPlace}, {new Date(card.birthDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
