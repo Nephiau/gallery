@@ -92,19 +92,26 @@ const app = express()
 app.use(cors())
 app.use(express.json({ limit: '25mb' }))
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 8000, socketTimeoutMS: 8000 })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err))
+
+app.get('/api/ping', (req, res) => res.json({ ok: true }))
 
 // ============================================================
 // SISWA routes — student records
 // GET supports ?class=XII A and/or ?type=together to filter
 app.get('/api/siswa', async (req, res) => {
-  const { class: cls, type } = req.query
-  const filter = {}
-  if (cls) filter.className = cls
-  if (type) filter.type = type
-  res.json(await Siswa.find(filter))
+  try {
+    const { class: cls, type } = req.query
+    const filter = {}
+    if (cls) filter.className = cls
+    if (type) filter.type = type
+    res.json(await Siswa.find(filter))
+  } catch (err) {
+    console.error('GET /api/siswa error:', err.message)
+    res.status(500).json({ error: err.message })
+  }
 })
 app.post('/api/siswa', authMiddleware, adminOnly, async (req, res) => {
   res.status(201).json(await Siswa.create(req.body))
