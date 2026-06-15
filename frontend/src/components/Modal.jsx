@@ -93,7 +93,7 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
         {/* Left side: photo */}
         <div style={{ flex: isMobile ? '0 0 auto' : '0 0 420px' }}>
           <img src={card.image} alt={card.name}
-            style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', display: 'block' }} />
+            style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', display: 'block' }} />
         </div>
 
         {/* Right side: info or edit form */}
