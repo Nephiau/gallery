@@ -72,22 +72,35 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
         background: 'rgba(255,255,255,0.95)', borderRadius: '16px',
         overflow: 'hidden', display: 'flex', flexDirection: isMobile ? 'column' : 'row',
         border: '1px solid var(--border)', fontFamily: 'var(--font-body)',
-        maxWidth: isMobile ? '95%' : '1100px', width: '92%', maxHeight: isMobile ? '90vh' : 'none',
+        maxWidth: isMobile ? '92%' : '1100px',
+        width: isMobile ? '92%' : '92%',
+        maxHeight: isMobile ? '85vh' : '90vh',
+        overflowY: isMobile ? 'auto' : 'visible',
         transform: visible ? 'scale(1) translateY(0)' : 'scale(0.92) translateY(24px)',
         opacity: visible ? 1 : 0,
         transition: 'transform 450ms cubic-bezier(0.34,1.56,0.64,1), opacity 350ms ease',
+        position: 'relative',
       }}>
+        {/* Close button — always visible on mobile */}
+        <button onClick={onClose} style={{
+          position: 'absolute', top: '0.75rem', right: '0.75rem', zIndex: 10,
+          background: 'rgba(0,0,0,0.45)', color: '#fff', border: 'none',
+          borderRadius: '50%', width: '32px', height: '32px',
+          fontSize: '1rem', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>✕</button>
+
         {/* Left side: photo */}
-        <div style={{ flex: isMobile ? '0 0 auto' : '0 0 420px', maxHeight: isMobile ? '40vh' : 'none' }}>
+        <div style={{ flex: isMobile ? '0 0 auto' : '0 0 420px', maxHeight: isMobile ? '35vh' : 'none' }}>
           <img src={card.image} alt={card.name}
-            style={{ width: '100%', height: '100%', maxHeight: isMobile ? '40vh' : 'none', objectFit: 'cover', display: 'block' }} />
+            style={{ width: '100%', height: '100%', maxHeight: isMobile ? '35vh' : 'none', objectFit: 'cover', display: 'block' }} />
         </div>
 
         {/* Right side: info or edit form */}
         <div style={{
-          flex: 1, padding: isMobile ? '1.5rem' : '3.5rem',
+          flex: 1, padding: isMobile ? '1rem' : '3.5rem',
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          gap: '0.75rem', position: 'relative', overflowY: isMobile ? 'auto' : 'visible',
+          gap: '0.5rem', position: 'relative',
         }}>
           {/* Edit toggle button — admin only */}
           {isAdmin && !editing && (
@@ -149,7 +162,7 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
           ) : (
             /* Read-only view */
             <>
-              <p style={{ fontWeight: 600, fontSize: '2rem', color: 'var(--ink)' }}>{card.name}</p>
+              <p style={{ fontWeight: 600, fontSize: isMobile ? '1.25rem' : '2rem', color: 'var(--ink)' }}>{card.name}</p>
               {card.nickname && <p style={{ fontSize: '1rem', color: 'var(--sage-deep)', marginTop: '-0.25rem' }}>@{card.nickname}</p>}
               <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>
                 {card.nomorAbsen && <>#{card.nomorAbsen} · </>}{card.className}

@@ -85,9 +85,9 @@ export default function Card({ image, name, nickname, className, quote, instagra
             {className}
           </p>
           <p style={{ fontWeight: 600, color: 'var(--ink)', marginBottom: '0.15rem' }}>{name}</p>
-          {nickname && <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>@{nickname}</p>}
-          {quote && <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', fontStyle: 'italic' }}>"{quote}"</p>}
           {instagram && <p style={{ fontSize: '0.65rem', color: 'var(--muted-foreground)', marginTop: '0.25rem' }}>IG: @{instagram}</p>}
+          {quote && <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', fontStyle: 'italic' }}>"{quote}"</p>}
+          
         </div>
 
         {/* Delete button — admin only, appears on hover */}
