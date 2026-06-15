@@ -1,22 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Card from './Card'
 import TogetherCard from './TogetherCard'
 import Modal from './Modal'
+import Lightbox from './Lightbox'
 import useMediaQuery from '../useMediaQuery'
 
 // Renders a masonry grid of student/teacher/moment cards.
 // Splits data into 'together' (group photos) and 'single' (individual) sections.
 // Admins can select multiple cards for bulk deletion.
 export default function CardGrid({ data, onDelete, collection, onBulkDelete, onUpdate, isAlbum }) {
-  const [selected, setSelected] = useState(null)       // card currently open in Modal/lightbox
-  const [selectedIds, setSelectedIds] = useState([])   // IDs checked for bulk delete
-
-  // Close lightbox on Escape key (album mode or together cards)
-  useEffect(() => {
-    const handler = e => { if (e.key === 'Escape') setSelected(null) }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [])
+  const [selected, setSelected] = useState(null)
+  const [selectedIds, setSelectedIds] = useState([])
   const token = localStorage.getItem('token')
   const role = localStorage.getItem('role')
   const isAdmin = token && role === 'admin'
@@ -110,27 +104,8 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
       <Modal card={(isAlbum || selected?.type === 'together') ? null : selected} onClose={() => setSelected(null)} collection={collection} onUpdate={onUpdate} />
 
       {/* Lightbox — photo-only overlay for album mode or together cards */}
-      {(isAlbum || selected?.type === 'together') && selected && (
-        <div onClick={() => setSelected(null)} style={{
-          position: 'fixed', inset: 0, zIndex: 300,
-          background: 'rgba(0,0,0,0.88)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backdropFilter: 'blur(8px)', cursor: 'zoom-out',
-        }}>
-          <img src={selected.image} alt={selected.name || ''} style={{
-            maxWidth: '90vw', maxHeight: '90vh',
-            objectFit: 'contain', borderRadius: '8px',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
-          }} />
-          <button onClick={() => setSelected(null)} style={{
-            position: 'fixed', top: '1.5rem', right: '2rem',
-            background: 'rgba(255,255,255,0.15)', color: '#fff', border: 'none',
-            borderRadius: '50%', width: '44px', height: '44px',
-            fontSize: '1.5rem', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backdropFilter: 'blur(4px)', fontFamily: 'var(--font-body)',
-          }}>✕</button>
-        </div>
+      {(isAlbum || selected?.type === 'together') && (
+        <Lightbox photo={selected} onClose={() => setSelected(null)} />
       )}
     </>
   )

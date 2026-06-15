@@ -98,7 +98,7 @@ export default function BulkUpload() {
         {error && <p style={{ color: '#c0392b', fontSize: '0.85rem' }}>{error}</p>}
         {result && (
           <p style={{ color: '#2e7d32', fontSize: '0.85rem', background: 'rgba(46,125,50,0.08)', padding: '0.75rem 1rem', borderRadius: '6px' }}>
-            ✅ {result.count} foto berhasil ditambahkan ke <strong>{result.collection}</strong>!
+          ✅ {result.results.length} foto berhasil diproses ke <strong>{result.collection}</strong>!
           </p>
         )}
 

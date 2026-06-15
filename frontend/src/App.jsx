@@ -11,6 +11,7 @@ import Register from './pages/Register'
 import UploadRequest from './pages/UploadRequest'
 import AdminMailbox from './pages/AdminMailbox'
 import BulkUpload from './pages/BulkUpload'
+import Lightbox from './components/Lightbox'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -49,40 +50,8 @@ function FadePhoto({ src, delay, span, onClick }) {
   )
 }
 
-// Full-screen image overlay shown when user clicks a photo.
-// Closes on backdrop click or Escape key.
-function Lightbox({ photo, onClose }) {
-  useEffect(() => {
-    const handler = e => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [onClose])
 
-  if (!photo) return null
-  return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 300,
-      background: 'rgba(0,0,0,0.85)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      backdropFilter: 'blur(8px)',
-      cursor: 'zoom-out',
-    }}>
-      <img src={photo.image} alt={photo.name || ''} style={{
-        maxWidth: '90vw', maxHeight: '90vh',
-        objectFit: 'contain', borderRadius: '8px',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
-      }} />
-      <button onClick={onClose} style={{
-        position: 'fixed', top: '1.5rem', right: '2rem',
-        background: 'rgba(255,255,255,0.15)', color: '#fff', border: 'none',
-        borderRadius: '50%', width: '44px', height: '44px',
-        fontSize: '1.5rem', cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backdropFilter: 'blur(4px)', fontFamily: 'var(--font-body)',
-      }}>✕</button>
-    </div>
-  )
-}
+
 
 // One letter of the hero "ASHATARA" title.
 // Each letter animates in with a staggered GSAP delay.
@@ -136,14 +105,13 @@ function Home() {
   const [selectedPhoto, setSelectedPhoto] = useState(null) // photo currently open in lightbox
   const [showCta, setShowCta] = useState(false)        // whether "Cari Temanmu" button is visible
 
-  // Fetch momen photos + siswa album (together) photos, then merge and shuffle
+  // Fetch momen photos + siswa together photos, then merge and shuffle
   useEffect(() => {
     Promise.all([
       fetch('/api/momen').then(r => r.json()),
-      fetch('/api/siswa').then(r => r.json()).then(d => d.filter(s => s.type === 'together')),
+      fetch('/api/siswa?type=together').then(r => r.json()),
     ]).then(([momenData, albumData]) => {
-      const merged = [...momenData, ...albumData].sort(() => Math.random() - 0.5)
-      setMomen(merged)
+      setMomen([...momenData, ...albumData].sort(() => Math.random() - 0.5))
     }).catch(() => {})
   }, [])
 

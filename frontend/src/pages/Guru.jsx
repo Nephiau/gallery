@@ -16,8 +16,8 @@ export default function Guru() {
 
   // Filter by name or subject (className stores the subject for Guru)
   const filtered = data.filter(d =>
-    d.name.toLowerCase().includes(query.toLowerCase()) ||
-    d.className.toLowerCase().includes(query.toLowerCase())
+    d.name?.toLowerCase().includes(query.toLowerCase()) ||
+    (d.className || '').toLowerCase().includes(query.toLowerCase())
   )
 
   // Delete a single teacher and remove from local state

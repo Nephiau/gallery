@@ -19,7 +19,7 @@ export default function Siswa() {
   // Album tab fetches all siswa and filters client-side for type='together'.
   useEffect(() => {
     if (activeClass === ALBUM) {
-      fetch('/api/siswa').then(r => r.json()).then(d => setAllData(d.filter(s => s.type === 'together'))).catch(() => {})
+      fetch('/api/siswa?type=together').then(r => r.json()).then(setAllData).catch(() => {})
     } else {
       const url = activeClass === 'Semua' ? '/api/siswa' : `/api/siswa?class=${encodeURIComponent(activeClass)}`
       fetch(url).then(r => r.json()).then(setData).catch(() => {})
@@ -32,9 +32,9 @@ export default function Siswa() {
   // Filter by search query — matches name, nickname, or Instagram
   const filtered = source.filter(d => {
     const q = query.toLowerCase()
-    return d.name.toLowerCase().includes(q) ||
-           (d.nickname && d.nickname.toLowerCase().includes(q)) ||
-           (d.instagram && d.instagram.toLowerCase().includes(q))
+    return (d.name || '').toLowerCase().includes(q) ||
+           (d.nickname || '').toLowerCase().includes(q) ||
+           (d.instagram || '').toLowerCase().includes(q)
   })
 
   // Remove one student from both data stores after deletion

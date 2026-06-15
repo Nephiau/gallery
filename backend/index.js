@@ -28,36 +28,24 @@ cloudinary.config({
 const memStorage = multer.memoryStorage()
 const upload = multer({ storage: memStorage, limits: { fileSize: 50 * 1024 * 1024 } })
 
-// Upload a raw file buffer to Cloudinary and return the secure URL.
+// Upload a buffer or base64 string to Cloudinary and return the secure URL.
 // Images are capped at 1200×1200 and auto-quality compressed.
-const uploadToCloudinary = (buffer, folder, publicId) => {
+const uploadToCloudinary = (input, folder, publicId) => {
+  const options = {
+    folder: `ashatara/${folder}`,
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+    transformation: [{ width: 1200, height: 1200, crop: 'limit', quality: 'auto' }],
+  }
+  if (publicId) options.public_id = publicId
+  if (typeof input === 'string') {
+    return new Promise((resolve, reject) =>
+      cloudinary.uploader.upload(input, options, (err, result) =>
+        err ? reject(err) : resolve(result.secure_url)))
+  }
   return new Promise((resolve, reject) => {
-    const uploadOptions = {
-      folder: `ashatara/${folder}`,
-      allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-      transformation: [{ width: 1200, height: 1200, crop: 'limit', quality: 'auto' }],
-    }
-    if (publicId) uploadOptions.public_id = publicId
-    const stream = cloudinary.uploader.upload_stream(uploadOptions, (err, result) => {
-      if (err) reject(err)
-      else resolve(result.secure_url)
-    })
-    stream.end(buffer)
-  })
-}
-
-// Upload a base64-encoded image string to Cloudinary and return the secure URL.
-// Used when approving photo requests (frontend sends images as base64).
-const uploadBase64ToCloudinary = (base64Str, folder) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(base64Str, {
-      folder: `ashatara/${folder}`,
-      allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-      transformation: [{ width: 1200, height: 1200, crop: 'limit', quality: 'auto' }],
-    }, (err, result) => {
-      if (err) reject(err)
-      else resolve(result.secure_url)
-    })
+    const stream = cloudinary.uploader.upload_stream(options, (err, result) =>
+      err ? reject(err) : resolve(result.secure_url))
+    stream.end(input)
   })
 }
 
@@ -110,11 +98,12 @@ mongoose.connect(process.env.MONGO_URI)
 
 // ============================================================
 // SISWA routes — student records
-// GET supports ?class=XII A to filter by className
-// ============================================================
+// GET supports ?class=XII A and/or ?type=together to filter
 app.get('/api/siswa', async (req, res) => {
-  const { class: cls } = req.query
-  const filter = cls ? { className: cls } : {}
+  const { class: cls, type } = req.query
+  const filter = {}
+  if (cls) filter.className = cls
+  if (type) filter.type = type
   res.json(await Siswa.find(filter))
 })
 app.post('/api/siswa', authMiddleware, adminOnly, async (req, res) => {
@@ -135,15 +124,10 @@ app.delete('/api/siswa/:id', authMiddleware, adminOnly, async (req, res) => {
 // ============================================================
 app.get('/api/guru', async (req, res) => {
   const gurus = await Guru.find().sort('indexNumber')
-  // Clean legacy filenames stored as names (e.g. "60. Siti Syarah IDZ07276" → "Siti Syarah")
-  const cleaned = gurus.map(g => {
-    const clean = g.name
-      .replace(/^\d+[\.\s]+/, '')
-      .replace(/\s+IDZ\d+.*$/i, '')
-      .trim()
+  res.json(gurus.map(g => {
+    const clean = g.name.replace(/^\d+[\.\s]+/, '').replace(/\s+IDZ\d+.*$/i, '').trim()
     return clean !== g.name ? { ...g.toObject(), name: clean } : g
-  })
-  res.json(cleaned)
+  }))
 })
 app.post('/api/guru', authMiddleware, adminOnly, async (req, res) => {
   res.status(201).json(await Guru.create(req.body))
@@ -248,7 +232,7 @@ app.post('/api/requests/:id/approve', authMiddleware, adminOnly, async (req, res
       Model = Siswa; className = cat; folder = `siswa/${pr.type || 'single'}`
     }
 
-    const imageUrl = await uploadBase64ToCloudinary(pr.image, folder)
+    const imageUrl = await uploadToCloudinary(pr.image, folder)
 
     // Siswa: try substring name match to update an existing student rather than duplicate
     if (Model === Siswa) {
@@ -322,6 +306,9 @@ app.post('/api/admin/bulk-upload', authMiddleware, adminOnly, upload.any(), asyn
       imageUrls.push(url)
     }
 
+    // For Siswa, fetch all students in the class once — reused for every file match
+    const allStudents = Model === Siswa ? await Siswa.find({ className }) : []
+
     const results = []
 
     for (let i = 0; i < files.length; i++) {
@@ -341,7 +328,6 @@ app.post('/api/admin/bulk-upload', authMiddleware, adminOnly, upload.any(), asyn
           .trim()
           .toLowerCase()
 
-        const allStudents = await Model.find({ className })
         // Score each student by how many words from the filename appear in their name
         const scored = allStudents.map(s => {
           const sName = s.name.toLowerCase()
