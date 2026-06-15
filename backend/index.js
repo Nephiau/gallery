@@ -286,6 +286,12 @@ app.post('/api/requests/:id/reject', authMiddleware, adminOnly, async (req, res)
 // Serve locally stored uploads (legacy fallback — main storage is Cloudinary)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
+// Serve built frontend in production (Dockerfile builds frontend/dist)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')))
+  app.get('*', (req, res) => res.sendFile(path.join(__dirname, '../frontend/dist/index.html')))
+}
+
 // ============================================================
 // ADMIN: Bulk photo upload
 // Accepts up to 50 photos, uploads to Cloudinary, then:
