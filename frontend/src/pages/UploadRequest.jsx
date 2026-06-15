@@ -122,7 +122,7 @@ export default function UploadRequest() {
             )
         )}
 
-        <input style={inputStyle} placeholder="Nama" value={form.name}
+        <input style={inputStyle} placeholder="Nama Kegiatan" value={form.name}
           onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
 
         {/* Category picker */}

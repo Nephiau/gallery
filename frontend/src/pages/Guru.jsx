@@ -42,7 +42,7 @@ export default function Guru() {
 
       {/* Search by name or mata pelajaran */}
       <input
-        type="text" placeholder="Cari nama atau mata pelajaran..."
+        type="text" placeholder="Cari nama..."
         value={query} onChange={e => setQuery(e.target.value)}
         style={{
           width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
