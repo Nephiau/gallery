@@ -323,11 +323,7 @@ app.post('/api/admin/bulk-upload', authMiddleware, adminOnly, upload.any(), asyn
       const fileName = f.originalname.replace(/\.[^/.]+$/, '')
       const imageUrl = imageUrls[i]
 
-      if (Model === Siswa) {
-        // Extract a clean name from filenames like "01._Ahmad_Fatihul_IDZ06274":
-        // 1. Strip leading number (e.g. "01.")
-        // 2. Strip trailing photo ID code (e.g. "IDZ06274")
-        // 3. Replace underscores with spaces
+      if (Model === Siswa && photoType !== 'together') {
         const extractedName = fileName
           .replace(/^\d+[._\s]+/, '')
           .replace(/[_\s]+[A-Z]{2,}\d{4,}[^_]*$/, '')
@@ -335,7 +331,6 @@ app.post('/api/admin/bulk-upload', authMiddleware, adminOnly, upload.any(), asyn
           .trim()
           .toLowerCase()
 
-        // Score each student by how many words from the filename appear in their name
         const scored = allStudents.map(s => {
           const sName = s.name.toLowerCase()
           const words = extractedName.split(/\s+/).filter(Boolean)
@@ -353,6 +348,10 @@ app.post('/api/admin/bulk-upload', authMiddleware, adminOnly, upload.any(), asyn
         } else {
           results.push({ action: 'skipped', name: fileName, reason: 'No matching student found' })
         }
+      } else if (Model === Siswa && photoType === 'together') {
+        const cleanName = namePrefix ? `${namePrefix} ${i + 1}` : fileName.replace(/_/g, ' ').trim()
+        const newDoc = await Model.create({ name: cleanName, className, image: imageUrl, quote: '', type: 'together' })
+        results.push({ action: 'created', id: newDoc._id, name: newDoc.name })
       } else {
         // Guru / Momen: always insert a new record.
         // For Guru filenames like "60. Siti Syarah Kautsar, S.Pd. IDZ07276",
