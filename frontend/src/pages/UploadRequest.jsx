@@ -48,6 +48,7 @@ export default function UploadRequest() {
   const [requests, setRequests] = useState([])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   const isSiswa = isSiswaCategory(category)
@@ -77,6 +78,7 @@ export default function UploadRequest() {
     setError(''); setSuccess('')
     if (images.length === 0) return setError('Pilih minimal 1 gambar')
 
+    setSubmitting(true)
     const headers = { 'Content-Type': 'application/json' }
     if (token) headers.Authorization = `Bearer ${token}`
 
@@ -91,9 +93,11 @@ export default function UploadRequest() {
         fetch('/api/requests', { method: 'POST', headers, body: JSON.stringify({ ...payload, image: img }) })
       ))
     } catch {
+      setSubmitting(false)
       return setError('Gagal mengirim permintaan')
     }
 
+    setSubmitting(false)
     setSuccess('Permintaan berhasil dikirim!')
     setForm({ name: '', quote: '' })
     setImages([])
@@ -204,11 +208,12 @@ export default function UploadRequest() {
           value={form.quote} required={isSiswa && photoType === 'single'}
           onChange={e => setForm(f => ({ ...f, quote: e.target.value }))} />
 
-        <button type="submit" style={{
-          padding: '0.65rem', borderRadius: '6px', cursor: 'pointer',
-          background: 'var(--sage-deep)', color: '#fff', border: 'none',
+        <button type="submit" disabled={submitting} style={{
+          padding: '0.65rem', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer',
+          background: submitting ? 'var(--muted-foreground)' : 'var(--sage-deep)', color: '#fff', border: 'none',
           fontFamily: 'var(--font-body)', fontSize: '0.85rem', letterSpacing: '0.1em',
-        }}>KIRIM PERMINTAAN</button>
+          opacity: submitting ? 0.7 : 1, transition: 'opacity 200ms, background 200ms',
+        }}>{submitting ? 'MENGIRIM...' : 'KIRIM PERMINTAAN'}</button>
       </form>
 
       {/* Riwayat — admin only */}
