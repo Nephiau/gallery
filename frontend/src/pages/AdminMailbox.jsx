@@ -52,17 +52,17 @@ export default function AdminMailbox() {
     <div style={{ padding: 'clamp(4rem,8vw,6rem) clamp(1rem,4vw,3rem) 4rem', background: 'var(--background)', minHeight: '100vh' }}>
       <style>{`
         @keyframes fadeInOverlay { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
-        .mailbox-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; }
-        .mailbox-card { position: relative; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,0.6); backdrop-filter: blur(6px); display: flex; flex-direction: column; flex: 1 1 280px; max-width: 380px; transition: box-shadow 200ms; }
+        .mailbox-grid { columns: 3; column-gap: 1.25rem; }
+        .mailbox-card { position: relative; break-inside: avoid; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,0.6); backdrop-filter: blur(6px); display: inline-flex; flex-direction: column; width: 100%; margin-bottom: 1.25rem; transition: box-shadow 200ms; }
         .mailbox-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .mailbox-card img { width: 100%; height: auto; display: block; object-fit: cover; }
-        .card-meta { padding: 0.85rem 1rem 0.75rem; flex: 1; }
+        .mailbox-card img { width: 100%; height: auto; display: block; }
+        .card-meta { padding: 0.85rem 1rem 0.75rem; }
         .card-actions { display: flex; gap: 0.5rem; padding: 0 1rem 1rem; }
         .btn-approve { padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; border: none; background: var(--sage-deep); color: #fff; font-family: var(--font-body); font-size: 0.8rem; transition: opacity 200ms; }
         .btn-reject  { padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: #c0392b; font-family: var(--font-body); font-size: 0.8rem; transition: opacity 200ms; }
         .btn-approve:disabled, .btn-reject:disabled { opacity: 0.5; cursor: not-allowed; }
-        @media (max-width: 480px) { .mailbox-card { flex: 1 1 100%; max-width: 100%; } }
-        @media (min-width: 481px) and (max-width: 768px) { .mailbox-card { flex: 1 1 calc(50% - 0.625rem); max-width: calc(50% - 0.625rem); } }
+        @media (max-width: 480px) { .mailbox-grid { columns: 1; } }
+        @media (min-width: 481px) and (max-width: 768px) { .mailbox-grid { columns: 2; } }
       `}</style>
 
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem,5vw,3rem)', color: 'var(--sage-deep)', marginBottom: '2rem' }}>

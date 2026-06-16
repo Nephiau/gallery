@@ -11,6 +11,7 @@ import useMediaQuery from '../useMediaQuery'
 export default function CardGrid({ data, onDelete, collection, onBulkDelete, onUpdate, isAlbum, onModalChange }) {
   const [selected, setSelected] = useState(null)
   const [selectedIds, setSelectedIds] = useState([])
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const setSelectedWithCallback = (val) => {
     setSelected(val)
@@ -35,8 +36,11 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
 
   const handleBulkDelete = () => {
     if (selectedIds.length === 0) return
-    const name = selectedIds.length === 1 ? '1 item' : `${selectedIds.length} item`
-    if (!window.confirm(`Hapus ${name}? Tindakan ini tidak bisa dibatalkan.`)) return
+    setConfirmDelete(true)
+  }
+
+  const confirmAndDelete = () => {
+    setConfirmDelete(false)
     onBulkDelete(selectedIds)
     setSelectedIds([])
   }
@@ -111,6 +115,21 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
       {/* Lightbox — photo-only overlay for album mode or together cards */}
       {(isAlbum || selected?.type === 'together') && (
         <Lightbox photo={selected} onClose={() => setSelectedWithCallback(null)} />
+      )}
+
+      {/* Custom bulk-delete confirmation dialog */}
+      {confirmDelete && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: '14px', padding: '2rem', maxWidth: '320px', width: '90%', textAlign: 'center', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', fontFamily: 'var(--font-body)' }}>
+            <p style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🗑️</p>
+            <p style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--ink)', marginBottom: '0.4rem' }}>Hapus {selectedIds.length} item?</p>
+            <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', marginBottom: '1.5rem' }}>Tindakan ini tidak bisa dibatalkan.</p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+              <button onClick={() => setConfirmDelete(false)} style={{ padding: '0.5rem 1.25rem', borderRadius: '6px', cursor: 'pointer', border: '1px solid var(--border)', background: 'transparent', color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem' }}>Batal</button>
+              <button onClick={confirmAndDelete} style={{ padding: '0.5rem 1.25rem', borderRadius: '6px', cursor: 'pointer', border: 'none', background: '#c0392b', color: '#fff', fontFamily: 'var(--font-body)', fontSize: '0.85rem' }}>Hapus</button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   )
