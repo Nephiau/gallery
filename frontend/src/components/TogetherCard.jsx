@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function TogetherCard({ image, name, className, _id, onClick, onDelete, selected, onToggleSelect, isAlbum }) {
+export default function TogetherCard({ image, name, className, _id, onClick, onEdit, onDelete, selected, onToggleSelect, isAlbum }) {
   const isSelectable = !!onToggleSelect
   const [imgLoaded, setImgLoaded] = useState(false)
 
@@ -56,21 +56,22 @@ export default function TogetherCard({ image, name, className, _id, onClick, onD
             style={{ width: '100%', aspectRatio: isAlbum ? 'unset' : '1/1', objectFit: 'cover', display: 'block', transition: 'transform 400ms ease, opacity 300ms ease', opacity: imgLoaded ? 1 : 0 }} />
         </div>
 
-        {/* Delete button — admin only, appears on hover */}
-        {onDelete && (
+        {/* Edit button — admin only, appears on hover. Opens modal in edit mode. */}
+        {onEdit && (
           <button
             onClick={e => {
               e.stopPropagation()
-              if (window.confirm(`Hapus "${name}"?`)) onDelete(_id)
+              onEdit(_id)
             }}
             className="delete-btn"
             style={{
               position: 'absolute', top: '0.5rem', right: '0.5rem',
-              background: 'rgba(192,57,43,0.85)', color: '#fff', border: 'none',
+              background: 'var(--sage-deep)', color: '#fff', border: 'none',
               borderRadius: '4px', padding: '0.2rem 0.5rem', fontSize: '0.7rem',
               cursor: 'pointer', zIndex: 4,
+              fontWeight: 600,
             }}
-          >✕</button>
+          >✎</button>
         )}
       </div>
     </div>

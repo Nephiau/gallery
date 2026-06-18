@@ -11,7 +11,8 @@ const inputStyle = {
 
 // Detail modal shown when a card is clicked.
 // Displays the photo + full info. Admins also get an edit form to update the record in-place.
-export default function Modal({ card, onClose, collection, onUpdate }) {
+// startEditing: if true, opens directly in edit mode (triggered by the ✎ hover button on cards).
+export default function Modal({ card, onClose, collection, onUpdate, startEditing = false }) {
   const [visible, setVisible] = useState(false) // drives CSS enter animation
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ name: '', nickname: '', className: '', quote: '', birthPlace: '', instagram: '', birthDate: '' })
@@ -32,11 +33,12 @@ export default function Modal({ card, onClose, collection, onUpdate }) {
         quote: card.quote || '', birthPlace: card.birthPlace || '', instagram: card.instagram || '',
         birthDate: card.birthDate ? new Date(card.birthDate).toISOString().split('T')[0] : '',
       })
-      setEditing(false)
+      // If startEditing is true (triggered from the ✎ button), auto-open the edit form
+      setEditing(startEditing)
     } else {
       setVisible(false)
     }
-  }, [card])
+  }, [card, startEditing])
 
   // PUT updated form data to the API and notify parent via onUpdate
   const handleSave = async () => {

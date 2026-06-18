@@ -7,14 +7,16 @@ import useMediaQuery from '../useMediaQuery'
 
 // Renders a masonry grid of student/teacher/moment cards.
 // Splits data into 'together' (group photos) and 'single' (individual) sections.
-// Admins can select multiple cards for bulk deletion.
+// Admins can select multiple cards for bulk deletion, or click edit on a card to open the modal in edit mode.
 export default function CardGrid({ data, onDelete, collection, onBulkDelete, onUpdate, isAlbum, onModalChange }) {
   const [selected, setSelected] = useState(null)
   const [selectedIds, setSelectedIds] = useState([])
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [editMode, setEditMode] = useState(false)
 
   const setSelectedWithCallback = (val) => {
     setSelected(val)
+    setEditMode(false)
     if (onModalChange) onModalChange(!!val)
   }
   const token = localStorage.getItem('token')
@@ -43,6 +45,16 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
     setConfirmDelete(false)
     onBulkDelete(selectedIds)
     setSelectedIds([])
+  }
+
+  // Edit handler: find the card by id and open the modal with editing mode enabled
+  const handleEdit = (id) => {
+    const card = data.find(d => d._id === id)
+    if (card) {
+      setSelected(card)
+      setEditMode(true)
+      if (onModalChange) onModalChange(true)
+    }
   }
 
   return (
@@ -81,7 +93,7 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
             <div key={d._id || d.name} style={{ breakInside: 'avoid', marginBottom: '1rem' }}>
               <TogetherCard {...d}
                 onClick={() => setSelectedWithCallback(d)}
-                onDelete={isAdmin && onDelete ? (id) => onDelete(id) : undefined}
+                onEdit={isAdmin ? () => handleEdit(d._id) : undefined}
                 selected={selectedIds.includes(d._id)}
                 onToggleSelect={isAdmin ? toggleSelect : undefined}
                 isAlbum={isAlbum}
@@ -98,7 +110,7 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
             <div key={d._id || d.name} style={{ breakInside: 'avoid', marginBottom: '1rem' }}>
               <Card {...d}
                 onClick={() => setSelectedWithCallback(d)}
-                onDelete={isAdmin && onDelete ? (id) => onDelete(id) : undefined}
+                onEdit={isAdmin ? () => handleEdit(d._id) : undefined}
                 selected={selectedIds.includes(d._id)}
                 onToggleSelect={isAdmin ? toggleSelect : undefined}
                 isAlbum={isAlbum}
@@ -110,7 +122,10 @@ export default function CardGrid({ data, onDelete, collection, onBulkDelete, onU
       )}
 
       {/* Detail/edit modal — suppressed in album mode or for together cards (lightbox is used instead) */}
-      <Modal card={(isAlbum || selected?.type === 'together') ? null : selected} onClose={() => setSelectedWithCallback(null)} collection={collection} onUpdate={onUpdate} />
+      <Modal card={(isAlbum || selected?.type === 'together') ? null : selected}
+        onClose={() => setSelectedWithCallback(null)}
+        collection={collection} onUpdate={onUpdate}
+        startEditing={editMode} />
 
       {/* Lightbox — photo-only overlay for album mode or together cards */}
       {(isAlbum || selected?.type === 'together') && (
