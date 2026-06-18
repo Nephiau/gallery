@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react'
 import CardGrid from '../components/CardGrid'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 import ScrollUpButton from '../components/ScrollUpButton'
 import useMediaQuery from '../useMediaQuery'
 
 // Teacher gallery page with name/subject search.
 export default function Guru() {
   const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   // Load all teachers on mount
   useEffect(() => {
-    fetch('/api/guru').then(r => r.json()).then(setData).catch(() => {})
+    setLoading(true)
+    fetch('/api/guru')
+      .then(r => r.json())
+      .then(d => { setData(d); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   // Filter by name or subject (className stores the subject for Guru)
@@ -57,8 +63,12 @@ export default function Guru() {
         />
       </div>
 
-      <CardGrid data={filtered} collection="Guru" onDelete={handleDelete} onBulkDelete={handleBulkDelete}
-        onUpdate={updated => setData(prev => prev.map(d => d._id === updated._id ? updated : d))} />
+      {loading ? (
+        <LoadingSkeleton count={12} />
+      ) : (
+        <CardGrid data={filtered} collection="Guru" onDelete={handleDelete} onBulkDelete={handleBulkDelete}
+          onUpdate={updated => setData(prev => prev.map(d => d._id === updated._id ? updated : d))} />
+      )}
       <ScrollUpButton />
     </div>
   )

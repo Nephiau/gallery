@@ -5,6 +5,11 @@
   100% { background-position: -200% 0; }
 }
 
+@keyframes pulse-skeleton {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
 :root {
   --background: transparent;
   --foreground: #1E1A2E;

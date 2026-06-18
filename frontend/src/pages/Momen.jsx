@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CardGrid from '../components/CardGrid'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 import ScrollUpButton from '../components/ScrollUpButton'
 import useMediaQuery from '../useMediaQuery'
 
@@ -13,13 +14,18 @@ export default function Momen() {
   const isAdmin = localStorage.getItem('role') === 'admin'
   const token = localStorage.getItem('token')
   const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('Semua')
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   // Load all moment photos on mount
   useEffect(() => {
-    fetch('/api/momen').then(r => r.json()).then(setData).catch(() => {})
+    setLoading(true)
+    fetch('/api/momen')
+      .then(r => r.json())
+      .then(d => { setData(d); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   // Delete a single moment photo
@@ -87,9 +93,13 @@ export default function Momen() {
         />
       </div>
 
-      {/* Delete is only available to admins */}
-      <CardGrid data={filtered} collection="Momen" onBulkDelete={handleBulkDelete} onDelete={isAdmin ? handleDelete : undefined}
-        onUpdate={updated => setData(prev => prev.map(d => d._id === updated._id ? updated : d))} isAlbum />
+      {/* Loading skeleton or card grid */}
+      {loading ? (
+        <LoadingSkeleton count={12} isAlbum />
+      ) : (
+        <CardGrid data={filtered} collection="Momen" onBulkDelete={handleBulkDelete} onDelete={isAdmin ? handleDelete : undefined}
+          onUpdate={updated => setData(prev => prev.map(d => d._id === updated._id ? updated : d))} isAlbum />
+      )}
       <ScrollUpButton />
     </div>
   )

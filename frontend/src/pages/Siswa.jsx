@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import CardGrid from '../components/CardGrid'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 import ScrollUpButton from '../components/ScrollUpButton'
 import useMediaQuery from '../useMediaQuery'
 
@@ -11,21 +12,30 @@ const ALBUM = 'Album' // special category for group/together photos
 export default function Siswa() {
   const [data, setData] = useState([])       // students for the active class filter
   const [allData, setAllData] = useState([]) // all together/album photos (fetched once)
+  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [activeClass, setActiveClass] = useState('Semua')
   const [modalOpen, setModalOpen] = useState(false)
   const isMobile = useMediaQuery('(max-width: 768px)')
 
-  // Fetch students when the active class changes.
-  // Album tab fetches all siswa and filters client-side for type='together'.
-  useEffect(() => {
+  const fetchData = useCallback(() => {
+    setLoading(true)
     if (activeClass === ALBUM) {
-      fetch('/api/siswa?type=together').then(r => r.json()).then(setAllData).catch(() => {})
+      fetch('/api/siswa?type=together')
+        .then(r => r.json())
+        .then(d => { setAllData(d); setLoading(false) })
+        .catch(() => setLoading(false))
     } else {
       const url = activeClass === 'Semua' ? '/api/siswa' : `/api/siswa?class=${encodeURIComponent(activeClass)}`
-      fetch(url).then(r => r.json()).then(setData).catch(() => {})
+      fetch(url)
+        .then(r => r.json())
+        .then(d => { setData(d); setLoading(false) })
+        .catch(() => setLoading(false))
     }
   }, [activeClass])
+
+  // Fetch students when the active class changes.
+  useEffect(() => { fetchData() }, [fetchData])
 
   // Use the correct data source depending on the active tab
   const source = activeClass === ALBUM ? allData : data
@@ -115,9 +125,13 @@ export default function Siswa() {
         />
       </div>
 
-      {/* Card grid — passes isAlbum so together photos render at natural aspect ratio */}
-      <CardGrid data={filtered} collection="Siswa" onDelete={handleDelete} onBulkDelete={handleBulkDelete}
-        onUpdate={handleUpdate} isAlbum={activeClass === ALBUM} onModalChange={setModalOpen} />
+      {/* Loading skeleton or card grid */}
+      {loading ? (
+        <LoadingSkeleton count={12} isAlbum={activeClass === ALBUM} />
+      ) : (
+        <CardGrid data={filtered} collection="Siswa" onDelete={handleDelete} onBulkDelete={handleBulkDelete}
+          onUpdate={handleUpdate} isAlbum={activeClass === ALBUM} onModalChange={setModalOpen} />
+      )}
       <ScrollUpButton hidden={modalOpen} />
     </div>
   )
