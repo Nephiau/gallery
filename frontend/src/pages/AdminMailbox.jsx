@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 
 // Overlay shown on a card after approve (✓) or reject (✗)
 function ResultOverlay({ type }) {
@@ -23,13 +24,16 @@ export default function AdminMailbox() {
   const token = localStorage.getItem('token')
   const role  = localStorage.getItem('role')
   const [requests, setRequests] = useState([])
+  const [loading, setLoading] = useState(true)
   // Map of id → 'approve' | 'reject' | 'loading-approve' | 'loading-reject'
   const [states, setStates] = useState({})
 
   useEffect(() => {
     if (!token || role !== 'admin') return navigate('/')
     fetch('/api/requests/pending', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json()).then(setRequests).catch(() => {})
+      .then(r => r.json())
+      .then(data => { setRequests(data); setLoading(false) })
+      .catch(() => setLoading(false))
   }, [])
 
   const action = async (id, type) => {
@@ -69,7 +73,9 @@ export default function AdminMailbox() {
         Mailbox Admin
       </h2>
 
-      {requests.length === 0
+      {loading
+        ? <LoadingSkeleton count={6} />
+        : requests.length === 0
         ? <p style={{ color: 'var(--muted-foreground)', fontSize: '0.85rem' }}>Tidak ada permintaan masuk.</p>
         : <div className="mailbox-grid">
             {requests.map(r => {
