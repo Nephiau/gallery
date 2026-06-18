@@ -66,11 +66,13 @@ export default function Siswa() {
 
   return (
     <div style={{ paddingTop: '5rem', padding: isMobile ? '5rem 1rem 3rem' : '5rem 3rem 4rem', background: 'var(--background)' }}>
-      <h2 style={{ fontFamily: 'var(--font-body)', fontSize: isMobile ? '2rem' : '3rem', color: 'var(--sage-deep)', marginBottom: '0.25rem' }}>Siswa</h2>
-      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--muted-foreground)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>Shataver 26</p>
+      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <h2 style={{ fontFamily: 'var(--font-body)', fontSize: isMobile ? '2rem' : '3rem', color: 'var(--sage-deep)', marginBottom: '0.25rem' }}>Siswa</h2>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--muted-foreground)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Shataver 26</p>
+      </div>
 
       {/* Class filter pills */}
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem', justifyContent: 'center' }}>
         {classes.map(c => (
           <button key={c} onClick={() => setActiveClass(c)} style={{
             padding: '0.4rem 1rem', borderRadius: '999px', cursor: 'pointer',
@@ -99,17 +101,19 @@ export default function Siswa() {
       </div>
 
       {/* Name search input */}
-      <input
-        type="text" placeholder="Cari nama..."
-        value={query} onChange={e => setQuery(e.target.value)}
-        style={{
-          width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
-          marginBottom: '2rem', borderRadius: '6px',
-          border: '1px solid var(--border)', background: 'rgba(255,255,255,0.85)',
-          color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem',
-          outline: 'none', boxSizing: 'border-box',
-        }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <input
+          type="text" placeholder="Cari nama..."
+          value={query} onChange={e => setQuery(e.target.value)}
+          style={{
+            width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
+            marginBottom: '2rem', borderRadius: '6px',
+            border: '1px solid var(--border)', background: 'rgba(255,255,255,0.85)',
+            color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem',
+            outline: 'none', boxSizing: 'border-box',
+          }}
+        />
+      </div>
 
       {/* Card grid — passes isAlbum so together photos render at natural aspect ratio */}
       <CardGrid data={filtered} collection="Siswa" onDelete={handleDelete} onBulkDelete={handleBulkDelete}

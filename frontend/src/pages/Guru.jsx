@@ -38,20 +38,24 @@ export default function Guru() {
 
   return (
     <div style={{ paddingTop: '5rem', padding: isMobile ? '5rem 1rem 3rem' : '5rem 3rem 4rem', background: 'var(--background)' }}>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? '2rem' : '3rem', color: 'var(--sage-deep)', marginBottom: '1.5rem' }}>Guru</h2>
+      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? '2rem' : '3rem', color: 'var(--sage-deep)' }}>Guru</h2>
+      </div>
 
       {/* Search by name or mata pelajaran */}
-      <input
-        type="text" placeholder="Cari nama..."
-        value={query} onChange={e => setQuery(e.target.value)}
-        style={{
-          width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
-          marginBottom: '2rem', borderRadius: '6px',
-          border: '1px solid var(--border)', background: 'rgba(255,255,255,0.85)',
-          color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem',
-          outline: 'none', boxSizing: 'border-box',
-        }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <input
+          type="text" placeholder="Cari nama..."
+          value={query} onChange={e => setQuery(e.target.value)}
+          style={{
+            width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
+            marginBottom: '2rem', borderRadius: '6px',
+            border: '1px solid var(--border)', background: 'rgba(255,255,255,0.85)',
+            color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem',
+            outline: 'none', boxSizing: 'border-box',
+          }}
+        />
+      </div>
 
       <CardGrid data={filtered} collection="Guru" onDelete={handleDelete} onBulkDelete={handleBulkDelete}
         onUpdate={updated => setData(prev => prev.map(d => d._id === updated._id ? updated : d))} />

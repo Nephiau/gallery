@@ -47,9 +47,10 @@ export default function Momen() {
   return (
     <div style={{ paddingTop: '5rem', padding: isMobile ? '5rem 1rem 3rem' : '5rem 3rem 4rem', background: 'var(--background)' }}>
       {/* Header with upload shortcut button */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem', position: 'relative' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? '2rem' : '3rem', color: 'var(--sage-deep)' }}>Momen</h2>
         <button onClick={() => navigate('/upload')} style={{
+          position: 'absolute', right: 0,
           padding: '0.5rem 1.25rem', borderRadius: '6px', cursor: 'pointer',
           background: 'var(--sage-deep)', color: '#fff', border: 'none',
           fontFamily: 'var(--font-body)', fontSize: '0.8rem', letterSpacing: '0.1em',
@@ -57,7 +58,7 @@ export default function Momen() {
       </div>
 
       {/* Year filter pills */}
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem', justifyContent: 'center' }}>
         {categories.map(c => (
           <button key={c} onClick={() => setActiveCategory(c)} style={{
             padding: '0.4rem 1rem', borderRadius: '999px', cursor: 'pointer',
@@ -72,17 +73,19 @@ export default function Momen() {
       </div>
 
       {/* Name search input */}
-      <input
-        type="text" placeholder="Cari momen..."
-        value={query} onChange={e => setQuery(e.target.value)}
-        style={{
-          width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
-          marginBottom: '2rem', borderRadius: '6px',
-          border: '1px solid var(--border)', background: 'rgba(255,255,255,0.85)',
-          color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem',
-          outline: 'none', boxSizing: 'border-box',
-        }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <input
+          type="text" placeholder="Cari momen..."
+          value={query} onChange={e => setQuery(e.target.value)}
+          style={{
+            width: '100%', maxWidth: '360px', padding: '0.6rem 1rem',
+            marginBottom: '2rem', borderRadius: '6px',
+            border: '1px solid var(--border)', background: 'rgba(255,255,255,0.85)',
+            color: 'var(--ink)', fontFamily: 'var(--font-body)', fontSize: '0.85rem',
+            outline: 'none', boxSizing: 'border-box',
+          }}
+        />
+      </div>
 
       {/* Delete is only available to admins */}
       <CardGrid data={filtered} collection="Momen" onBulkDelete={handleBulkDelete} onDelete={isAdmin ? handleDelete : undefined}
