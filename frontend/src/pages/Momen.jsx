@@ -53,10 +53,10 @@ export default function Momen() {
   return (
     <div style={{ paddingTop: '5rem', padding: isMobile ? '5rem 1rem 3rem' : '5rem 3rem 4rem', background: 'var(--background)' }}>
       {/* Header with upload shortcut button */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem', position: 'relative' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem', position: isMobile ? 'static' : 'relative' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? '2rem' : '3rem', color: 'var(--sage-deep)' }}>Momen</h2>
         <button onClick={() => navigate('/upload')} style={{
-          position: 'absolute', right: 0,
+          position: isMobile ? 'static' : 'absolute', right: 0,
           padding: '0.5rem 1.25rem', borderRadius: '6px', cursor: 'pointer',
           background: 'var(--sage-deep)', color: '#fff', border: 'none',
           fontFamily: 'var(--font-body)', fontSize: '0.8rem', letterSpacing: '0.1em',
