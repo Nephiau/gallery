@@ -31,9 +31,12 @@ export default function AdminMailbox() {
   useEffect(() => {
     if (!token || role !== 'admin') return navigate('/')
     fetch('/api/requests/pending', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('Unauthorized')
+        return r.json()
+      })
       .then(data => { setRequests(data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch(() => { setLoading(false); navigate('/login') })
   }, [])
 
   const action = async (id, type) => {
